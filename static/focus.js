@@ -6,29 +6,15 @@ const API = {
 };
 
 function sendRequest(url) {
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    try {
-                        const data = JSON.parse(xhr.response);
-                        resolve(data);
-                    } catch (err) {
-                        reject(err);
-                    }
-                } else {
-                    reject(new Error(`Request failed with status ${xhr.status}`));
-                }
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
             }
-        };
-
-        xhr.onerror = () => reject(new Error('Network error'));
-        xhr.send();
-    });
+            return response.json();
+        });
 }
+
 
 async function run() {
     try {
